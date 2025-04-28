@@ -1,0 +1,50 @@
+import allure
+import pytest
+from selenium import webdriver
+import requests
+
+@allure.title("Тест оформления заказа книги на сайте")
+def test_order_book():
+    driver = webdriver.Chrome()
+    driver.get("https://www.chitai-gorod.ru/")
+
+
+    # Добавляем книгу в корзину
+    driver.find_element_by_class_name("add-to-basket").click()
+
+
+    # Переходим в корзину
+    driver.find_element_by_class_name("go-to-cart").click()
+    assert "Корзина" in driver.title
+
+
+    # Оформляем заказ
+    driver.find_element_by_id("orderButton").click()
+
+
+    # Переходим на страницу оформления заказа
+    # Заполняем форму
+    driver.find_element_by_id("name").send_keys("Имя")
+    driver.find_element_by_id("email").send_keys("email@example.com")
+    driver.find_element_by_class_name("make-order").click()
+
+
+
+    # Проверяем что заказ оформлен успешно
+    assert "Спасибо за покупку" in driver.page_source
+
+    driver.quit()
+
+
+if __name__ == "__main__":
+    pytest.main(["-v", __file__])
+
+"""Этот тест открывает сайт, добавляет книгу в корзину, переходит в корзину, оформляет заказ, заполняет форму и проверяет успешное оформление заказа"""
+
+
+# Для создания отчета в Allure
+pytest --alluredir=allure-results
+
+
+# Для просмотра отчета в Allure
+allure serve allure-results
