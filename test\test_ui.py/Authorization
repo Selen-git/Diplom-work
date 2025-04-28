@@ -1,1 +1,48 @@
+pip install virtualenv
+virtualenv venv
+sourse venv/bin/activate
+pip install selenium requests pytest allure-pytest
 
+import allure
+import pytest
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.ui import WebDriverWait
+from selenium.webdriver.common.support import expected_conditions as EC
+
+
+@pytest.fixture
+def browser():
+    driver = webdriver.Crome()
+    yield driver
+    driver.quit()
+
+@allure.feature("Authorization")
+@allure.story("Login Test")
+def test_login(browser):
+    browser.get("https://www.chitai-gorod.ru/")
+
+# Переключаемся на iframe с формой авторизации
+iframe = browser.find_element(By.XPATH, '//iframe[@class="cityauth_frame"]')
+browser.switch_to.frame(iframe)
+
+# Находим поля для ввода логина и пароля
+login_input = browser.find_element(By.NAME, 'USER_LOGIN')
+password_input = browser.find_element(By.NAME, 'USER_PASSWORD')
+
+# Вводим данные для авторизации
+login_input.send_keys("your_username")
+password_input.send_keys("your_password")
+
+# Нажимаем кнопку "Войти"
+login_button = browser.find_element(By.XPATH, '//input[@type="submit"]')
+login_button.click()
+
+# Проверяем успешность авторизации
+assert "Мой Читай-Город" in browser.page_sourse
+
+
+pytest --alluredir=./results
+allure serve ./results
