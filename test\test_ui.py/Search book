@@ -1,0 +1,60 @@
+pip install selenium requests pytest allure-pytest
+
+import allure
+from selenium import webdriver
+import pytest
+
+@allure.title("Поиск книг на https://www.chitai-gorod.ru/")
+@pytest.mark.parametrize("search_query", ["Python", "Machine Learning", "Agile"])
+def test_search_books(search_query):
+    # Инициализация драйвера браузера
+    driver = webdriver.Chrome()
+    driber.get("https://www.chitai-gorod.ru/")
+
+    # Поиск по сайту
+    search_input = driver.find_element_by_id("search_input")
+    search_input.send_keys(search_query)
+    search_input.submit()
+
+    # Проверка результатов
+    results = driver.find_elements_by_class_name("product-card")
+    assert len(results) > 0
+
+    driver.quit()
+
+# Добавить настройки для формирования отчетов Allure в файл pytest.ini
+[pytest]
+addopts = --alluredir=reports
+
+# Запустить тесты и сгенерировать отчет в Allure:
+pytest --alluredir=reports
+allure serve reports
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
