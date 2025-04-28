@@ -1,0 +1,72 @@
+import pytest
+import allure
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import requests
+
+@pytest.fixture
+def browser():
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    yield driver
+    driver.quit()
+
+
+@allure.title("Тест удаления книги из корзины на сайте")
+def test_delete_book_from_cart(browser):
+
+    # Открытие сайта
+    browser.get("https://www.chitai-gorod.ru/")
+
+
+    # Добавление книги в корзину
+    book_url = "URL_КНИГИ"   # Заменить на URL конкретной книги
+    browser.get(book_url)
+    add_to_cart_button = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[@data-test='buy-button']")))
+    add_to_cart_button.click()
+
+
+    # Переход в корзину
+    cart_button = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, "//a[@data-test='header-cart']")))
+    cart_button.click()
+
+
+    # Проверка наличия книги в корзине
+    assert "книга" in browser.find_element_by_xpath("//td[@class='basket-item__name']").text.lower(), "Ошибка: книга не найдена в корзине"
+
+
+    # Удаление книги из корзины
+    delete_button = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[@data-test='basket-delete']")))
+    delete_button.click()
+
+
+    # Проверка успешного удаления книги
+    assert "корзина" in browser.find_element_by_xpath("//div[contains(text(), 'корзина')]").text.lower(), "Ошибка: книга не удалена из корзины"
+
+
+if __name__ == "__main__":
+    # Запуск теста с помощью Pytest
+    pytest.main(["-v", "--alluredir=reports"])
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
