@@ -1,0 +1,39 @@
+import pytest
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import requests
+
+
+@pytest.fixture
+def open_browser():
+    driver = webdriver.Chrome()
+    yield driver
+    driver.quit()
+
+
+def test_search_books(open_browser):
+    query = "[":/!^&*)"
+
+
+    # Открываем главную страницу
+    open_browser.get("https://www.chitai-gorod.ru/")
+
+
+    # Ищем книгу на сайте
+    search_input = open_browser.find_element_by_id("search_input")
+    search_input.send_keys(query)
+    search_input.send_keys(Keys.RETURN)
+
+
+    # Проверяем результаты поиска
+    search_results = requests.get("https://www.chitai-gorod.ru/search/result.php?q=" + query)
+    assert search_results.status_code == 200
+    assert query in search_results.text
+
+
+    # Добавляем информацию об успешном выполнении теста в отчет Allure
+    pytest.allure.attach("Книга для поиска", query)
+
+
+if __name__ == "__main__":
+    pytest.main()
