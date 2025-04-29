@@ -1,0 +1,8 @@
+@allure.title("Test Empty Book Search")
+@pytest.mark.parametrize("query", [""], ids=["Empty Search"])
+def test_empty_search(query):
+    url = "https://www.chitai-gorod.ru/api/booksearch"
+    params = {"q": query}
+    response = requests.get(url, params=params)
+    assert response.status_code == 200
+    assert response.json()["total"] == 0
