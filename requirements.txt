@@ -1,1 +1,5 @@
-
+Используемые зависимости: 
+selenium==4.1.0
+requests==2.26.0
+pytest==7.0.1
+allure-pytest==2.9.45
